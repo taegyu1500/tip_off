@@ -1,0 +1,6 @@
+# Core runtime deps
+pydantic>=2.7,<3
+PyYAML>=6.0,<7
+
+# (optional) 일부 환경에서 필요할 수 있는 타입 백포트
+typing-extensions>=4.8
