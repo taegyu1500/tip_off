@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE/Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Build/Dist
+build/
+dist/
+
+# App data
+.tipoff/
