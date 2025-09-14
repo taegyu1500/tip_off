@@ -37,11 +37,15 @@ pip install --upgrade pip
 # 3) 사용자 데이터 디렉토리
 mkdir -p "$APP_DATA_DIR"
 
-# 4) 실행기 생성 (한글 표시/입력 지원)
+# 4) 실행기 생성 (레포로 cd + PYTHONPATH 설정 포함, 한글 표시/입력 지원)
 mkdir -p "$BIN_DIR"
 cat > "$RUNNER" <<'RS'
 #!/usr/bin/env bash
 set -euo pipefail
+
+REPO_DIR="$HOME/tip_off"
+cd "$REPO_DIR"
+export PYTHONPATH="$REPO_DIR:$PYTHONPATH"
 
 # X 접근 완화(조용히 실패 무시)
 command -v xhost >/dev/null 2>&1 && xhost +local: >/dev/null 2>&1 || true
@@ -80,7 +84,6 @@ Categories=Utility;
 StartupNotify=false
 DESK
 chmod +x "$DESKTOP"
-# GNOME/우분투: 신뢰 플래그(있으면 적용, 없어도 무시)
 gio set "$DESKTOP" metadata::trusted true 2>/dev/null || true
 
 echo "✅ TIP-OFF 네이티브 설치 완료!"
