@@ -45,7 +45,7 @@ set -euo pipefail
 
 REPO_DIR="$HOME/tip_off"
 cd "$REPO_DIR"
-export PYTHONPATH="$REPO_DIR:$PYTHONPATH"
+export PYTHONPATH="$REPO_DIR:${PYTHONPATH:-}"
 
 # X 접근 완화(조용히 실패 무시)
 command -v xhost >/dev/null 2>&1 && xhost +local: >/dev/null 2>&1 || true
