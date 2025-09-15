@@ -71,6 +71,11 @@ RS
 chmod +x "$RUNNER"
 
 # 5) 바탕화면 아이콘 생성
+ICON_SRC="$REPO_DIR/assets/tipoff.png"
+ICON_DST="$HOME/.local/share/icons/tipoff.png"
+mkdir -p "$(dirname "$ICON_DST")"
+cp -f "$ICON_SRC" "$ICON_DST"
+
 mkdir -p "$(dirname "$DESKTOP")"
 cat > "$DESKTOP" <<DESK
 [Desktop Entry]
@@ -78,9 +83,9 @@ Type=Application
 Name=TIP-OFF (Native)
 Comment=Run TIP-OFF (no Docker)
 Exec=$RUNNER
-Icon=utilities-terminal
-Terminal=true
-Categories=Utility;
+Icon=$ICON_DST
+Terminal=false
+Categories=Network;Chat;
 StartupNotify=false
 DESK
 chmod +x "$DESKTOP"
