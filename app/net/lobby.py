@@ -2,12 +2,14 @@
 LobbyService
 - 로비 채팅 메시지를 UDP 브로드캐스트로 송신
 - 동일 포트에서 수신하여 같은 room_id의 타인 메시지를 EventBus로 전달
+- 서버로도 메시지 전송하여 히스토리 저장
 """
 from __future__ import annotations
 import json, socket, threading, time, uuid
 from dataclasses import dataclass
 from typing import Optional
 from app.core.bus import EventBus
+from .server_client import ServerClient, ServerConfig
 
 @dataclass
 class LobbyConfig:
@@ -17,6 +19,10 @@ class LobbyConfig:
     broadcast_ip: str
     port: int  # UDP_CHAT_PORT
     recv_buf: int = 16384
+    enable_server: bool = True  # 서버 연동 활성화
+    server_host: str = "127.0.0.1"
+    server_http_port: int = 8080
+    server_udp_port: int = 5002
 
 class LobbyService:
     def __init__(self, cfg: LobbyConfig, bus: EventBus):
@@ -24,6 +30,17 @@ class LobbyService:
         self.bus = bus
         self._stop = threading.Event()
         self._rx_th: Optional[threading.Thread] = None
+        
+        # 서버 클라이언트 초기화
+        if cfg.enable_server:
+            server_cfg = ServerConfig(
+                host=cfg.server_host,
+                http_port=cfg.server_http_port,
+                udp_bridge_port=cfg.server_udp_port
+            )
+            self.server_client = ServerClient(server_cfg)
+        else:
+            self.server_client = None
 
     def start(self):
         self._stop.clear()
@@ -47,9 +64,15 @@ class LobbyService:
         }
         addr = (self.cfg.broadcast_ip, self.cfg.port)
         try:
+            # UDP 브로드캐스트 전송
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
                 s.sendto(json.dumps(msg, ensure_ascii=False).encode("utf-8"), addr)
+                
+            # 서버로도 전송 (히스토리 저장용)
+            if self.server_client:
+                self.server_client.send_message_to_server(msg)
+                
         except Exception as e:
             print("[lobby] tx error:", e)
 

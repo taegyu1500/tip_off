@@ -7,6 +7,7 @@ DEFAULTS = {
     "ZMQ_PORT": 5555,
     "UDP_PORT": 5000,
     "UDP_CHAT_PORT": 5001,
+    "UDP_DM_PORT": 5003,
     "BROADCAST_IP": "192.168.100.255",
     "TZ": "Asia/Seoul",
     "TOPMOST_DEFAULT": False,
@@ -17,4 +18,12 @@ DEFAULTS = {
     "SOUND_ON_DM": True,
     "SEQ_GAP_WAIT_MS": 300,
     "LOG_LEVEL": "INFO",
+    # 서버 관련 설정
+    "SERVER_ENABLED": True,
+    "SERVER_HOST": "127.0.0.1",
+    "SERVER_HTTP_PORT": 8080,
+    "SERVER_UDP_PORT": 5002,
+    "SERVER_DB_PATH": "tipoff.db",
+    "LOAD_HISTORY_ON_START": True,
+    "HISTORY_LIMIT": 50,
 }

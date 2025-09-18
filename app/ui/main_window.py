@@ -142,7 +142,7 @@ class MainWindow:
     # ---------- 메시지 렌더 (시간 · 이름 · 채팅) ----------
     def add_message(self, text: str, mine: bool = False, meta_hint: bool=False,
                     target: Optional[str] = None, meta_nick: Optional[str] = None,
-                    from_uid: Optional[str] = None):
+                    from_uid: Optional[str] = None, is_history: bool = False):
         view = self._view_for(target)
         row = ttk.Frame(view["msg_frame"]); row.pack(fill="x", anchor="w", pady=3)
 
@@ -157,17 +157,24 @@ class MainWindow:
                 # DM: 내 메시지는 'me', 수신은 '@상대ID'
                 name = "me" if mine else (f"@{from_uid}" if from_uid else "@peer")
 
+        # 히스토리 메시지 표시
+        if is_history:
+            name = f"[히스토리] {name}"
+
         # [시간]
-        t_lbl = ttk.Label(row, text=hhmm, width=6, anchor="w", foreground="#666")
+        time_color = "#999" if is_history else "#666"
+        t_lbl = ttk.Label(row, text=hhmm, width=6, anchor="w", foreground=time_color)
         t_lbl.grid(row=0, column=0, sticky="w")
 
         # [이름]
-        n_lbl = ttk.Label(row, text=name, width=12, anchor="w",
-                          font=("Arial", 10, "bold") if not meta_hint else ("Arial", 10), foreground="#444")
+        name_color = "#888" if is_history else "#444"
+        name_font = ("Arial", 9, "italic") if is_history else (("Arial", 10, "bold") if not meta_hint else ("Arial", 10))
+        n_lbl = ttk.Label(row, text=name, width=15, anchor="w", font=name_font, foreground=name_color)
         n_lbl.grid(row=0, column=1, sticky="w", padx=(6,8))
 
         # [채팅]
-        c_lbl = ttk.Label(row, text=text, wraplength=680, justify="left")
+        text_color = "#777" if is_history else "black"
+        c_lbl = ttk.Label(row, text=text, wraplength=680, justify="left", foreground=text_color)
         c_lbl.grid(row=0, column=2, sticky="w")
 
         row.grid_columnconfigure(0, weight=0)
